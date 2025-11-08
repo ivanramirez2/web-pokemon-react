@@ -1,33 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect,useState } from 'react'
 import './App.css'
+import PokeInfoCard from './Components/PokeInfoCard/PokeInfoCard';
 
 function App() {
   const [count, setCount] = useState(0)
 
+    const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+
+  useEffect(() => {
+    setLoading(true);
+    setError('');
+
+    // Listado principal
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=20')
+      .then((res) => {
+        if (!res.ok) throw new Error('Error HTTP ' + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        // Para cada Pokémon, hacemos otra llamada para obtener detalles
+        return Promise.all( // Te permite realizar múltiples fetch en paralelo (más rápido).
+          data.results.map((pokemon) =>
+            fetch(pokemon.url)
+              .then((res) => res.json())
+              .then((details) => ({
+                name: details.name,
+                img: details.sprites.front_default,
+                types: details.types.map((t) => t.type.name),
+              }))
+          )
+        );
+      })
+      .then((items) => {
+        setArticles(items);
+      })
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []); // [] = solo una vez al ejecutar
+
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header></header>
+      <main>
+          <div className="container">
+            <div className="row">
+              {articles.map((a) => (
+                <PokeInfoCard
+                  key={a.name}
+                  name={a.name}
+                  img={a.img}
+                  types={a.types}
+                />
+              ))}
+            </div>
+           
+
+        </div>
+
+      </main>
+      <footer></footer>
     </>
   )
 }
