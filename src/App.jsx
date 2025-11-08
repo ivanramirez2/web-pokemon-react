@@ -5,7 +5,7 @@ import PokeInfoCard from './Components/PokeInfoCard/PokeInfoCard';
 function App() {
   const [count, setCount] = useState(0)
 
-    const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -47,7 +47,9 @@ function App() {
 
   return (
     <>
-      <header></header>
+      <header>
+        
+      </header>
       <main>
           <div className="container">
             <div className="row">

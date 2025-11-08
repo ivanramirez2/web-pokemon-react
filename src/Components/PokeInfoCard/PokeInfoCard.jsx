@@ -1,13 +1,14 @@
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
+import './PokeInfoCard.css'
 
 function PokeInfoCard(props) {
     let name = props.name;
     let img = props.img;
     let types = props.types;
   return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src={img} />
+    <Card className='card-pokemon'>
+      <Card.Img src={img} />
       <Card.Body>
         <Card.Title>{name}</Card.Title>
         <Card.Text>
